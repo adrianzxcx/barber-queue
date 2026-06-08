@@ -1,0 +1,25 @@
+project_id = "kidghypdqgyerbqyfmhe"
+
+[auth]
+site_url = "http://localhost:3000"
+additional_redirect_urls = []
+
+[auth.rate_limit]
+email_sent = 100
+
+[auth.email]
+enable_confirmations = true
+max_frequency = "1m0s"
+otp_length = 6
+
+[auth.mfa.totp]
+enroll_enabled = true
+verify_enabled = true
+
+[auth.hook.custom_access_token]
+enabled = true
+uri = "pg-functions://postgres/public/custom_access_token_hook"
+
+
+[storage.vector]
+enabled = false
