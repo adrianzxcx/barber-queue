@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { LockKeyIcon, EyeIcon } from "@phosphor-icons/react";
+import { LockKeyIcon, EyeIcon, Check, X } from "@phosphor-icons/react";
 import { toast } from "sonner";
 
 import { AuthField } from "@/components/ui/auth-field";
@@ -17,17 +17,23 @@ export function UpdatePasswordForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
 
+  const hasMinLength = password.length >= 8;
+  const hasUppercase = /[A-Z]/.test(password);
+  const hasNumber = /[0-9]/.test(password);
+  const hasSpecialChar = /[^A-Za-z0-9]/.test(password);
+
   async function onSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setError("");
 
-    if (password !== confirmPassword) {
-      setError("Passwords do not match.");
+    const isPasswordValid = hasMinLength && hasUppercase && hasNumber && hasSpecialChar;
+    if (!isPasswordValid) {
+      setError("Please satisfy all password requirements.");
       return;
     }
 
-    if (password.length < 8) {
-      setError("Password must be at least 8 characters.");
+    if (password !== confirmPassword) {
+      setError("Passwords do not match.");
       return;
     }
 
@@ -46,27 +52,76 @@ export function UpdatePasswordForm() {
 
   return (
     <form className="space-y-7" onSubmit={onSubmit}>
-      <AuthField
-        id="password"
-        type={showPassword ? "text" : "password"}
-        label="New Password"
-        placeholder="********"
-        icon={<LockKeyIcon />}
-        value={password}
-        onChange={(event) => setPassword(event.target.value)}
-        required
-        minLength={8}
-        action={
-          <button
-            aria-label={showPassword ? "Hide password" : "Show password"}
-            className="absolute right-4 top-1/2 flex -translate-y-1/2 text-supremo-on-surface-variant transition-colors hover:text-primary [&_svg]:size-6"
-            onClick={() => setShowPassword((current) => !current)}
-            type="button"
-          >
-            <EyeIcon />
-          </button>
-        }
-      />
+      <div>
+        <AuthField
+          id="password"
+          type={showPassword ? "text" : "password"}
+          label="New Password"
+          placeholder="********"
+          icon={<LockKeyIcon />}
+          value={password}
+          onChange={(event) => setPassword(event.target.value)}
+          required
+          minLength={8}
+          action={
+            <button
+              aria-label={showPassword ? "Hide password" : "Show password"}
+              className="absolute right-4 top-1/2 flex -translate-y-1/2 text-supremo-on-surface-variant transition-colors hover:text-primary [&_svg]:size-6"
+              onClick={() => setShowPassword((current) => !current)}
+              type="button"
+            >
+              <EyeIcon />
+            </button>
+          }
+        />
+
+        {/* Password Requirements Checklist */}
+        <div className="space-y-1.5 mt-2 px-1 text-left">
+          <div className="flex items-center gap-2 text-[13px] leading-tight">
+            {hasMinLength ? (
+              <Check className="h-4 w-4 text-emerald-400 shrink-0" weight="bold" />
+            ) : (
+              <X className="h-4 w-4 text-supremo-on-surface-variant/40 shrink-0" weight="bold" />
+            )}
+            <span className={hasMinLength ? "text-emerald-400 font-medium" : "text-supremo-on-surface-variant/60"}>
+              Minimum 8 characters
+            </span>
+          </div>
+
+          <div className="flex items-center gap-2 text-[13px] leading-tight">
+            {hasUppercase ? (
+              <Check className="h-4 w-4 text-emerald-400 shrink-0" weight="bold" />
+            ) : (
+              <X className="h-4 w-4 text-supremo-on-surface-variant/40 shrink-0" weight="bold" />
+            )}
+            <span className={hasUppercase ? "text-emerald-400 font-medium" : "text-supremo-on-surface-variant/60"}>
+              At least one uppercase letter
+            </span>
+          </div>
+
+          <div className="flex items-center gap-2 text-[13px] leading-tight">
+            {hasNumber ? (
+              <Check className="h-4 w-4 text-emerald-400 shrink-0" weight="bold" />
+            ) : (
+              <X className="h-4 w-4 text-supremo-on-surface-variant/40 shrink-0" weight="bold" />
+            )}
+            <span className={hasNumber ? "text-emerald-400 font-medium" : "text-supremo-on-surface-variant/60"}>
+              At least one number
+            </span>
+          </div>
+
+          <div className="flex items-center gap-2 text-[13px] leading-tight">
+            {hasSpecialChar ? (
+              <Check className="h-4 w-4 text-emerald-400 shrink-0" weight="bold" />
+            ) : (
+              <X className="h-4 w-4 text-supremo-on-surface-variant/40 shrink-0" weight="bold" />
+            )}
+            <span className={hasSpecialChar ? "text-emerald-400 font-medium" : "text-supremo-on-surface-variant/60"}>
+              At least one special character
+            </span>
+          </div>
+        </div>
+      </div>
 
       <AuthField
         id="confirmPassword"
