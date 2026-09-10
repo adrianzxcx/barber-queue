@@ -4,22 +4,20 @@ import { cn } from "@/lib/utils";
 
 type BarberRosterCardProps = {
   name: string;
-  specialty: string;
-  rank: string;
   status: "available" | "unavailable" | "busy";
   wait?: string;
   image: string;
   imagePosition?: string;
+  onClick?: () => void;
 };
 
 function BarberRosterCard({
   name,
-  specialty,
-  rank,
   status,
   wait,
   image,
   imagePosition = "center",
+  onClick,
 }: BarberRosterCardProps) {
   const isAvailable = status === "available";
   const isBusy = status === "busy";
@@ -32,7 +30,15 @@ function BarberRosterCard({
         : "Unavailable";
 
   return (
-    <article className="rounded-3xl border border-supremo-outline-variant/12 bg-supremo-surface-container-low p-7 shadow-xl transition-transform hover:-translate-y-1 hover:border-primary/25">
+    <article
+      onClick={status !== "unavailable" ? onClick : undefined}
+      className={cn(
+        "rounded-3xl border border-supremo-outline-variant/12 bg-supremo-surface-container-low p-7 shadow-xl transition-transform",
+        status !== "unavailable"
+          ? "cursor-pointer hover:-translate-y-1 hover:border-primary/25 hover:shadow-2xl"
+          : "opacity-60 cursor-not-allowed"
+      )}
+    >
       <div className="mb-7 flex items-start justify-between">
         <div className="relative size-16 overflow-hidden rounded-lg border border-supremo-outline-variant/30 bg-supremo-surface-container-high">
           <div
@@ -52,24 +58,11 @@ function BarberRosterCard({
             )}
           />
         </div>
-        <span
-          className={cn(
-            "rounded border px-3 py-1 text-xs font-semibold uppercase tracking-[0.16em]",
-            isAvailable
-              ? "border-primary/45 text-primary"
-              : "border-supremo-outline-variant text-supremo-on-surface-variant"
-          )}
-        >
-          {rank}
-        </span>
       </div>
 
       <h3 className="text-2xl font-bold leading-7 text-supremo-on-surface">
         {name}
       </h3>
-      <p className="mt-2 min-h-12 text-base font-medium uppercase leading-6 text-supremo-on-surface-variant">
-        Specialist: {specialty}
-      </p>
 
       <div
         className={cn(

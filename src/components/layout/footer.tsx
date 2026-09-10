@@ -9,8 +9,6 @@
  *
  * Reused across all public-facing pages.
  */
-import Link from "next/link";
-
 /** Operating hours data — easy to update from one place */
 const HOURS: { day: string; time: string; closed?: boolean }[] = [
   { day: "Mon - Fri", time: "9AM - 9PM" },
@@ -45,8 +43,8 @@ export function Footer() {
             </p>
             {/* Social icons */}
             <div className="flex gap-4">
-              <SocialIcon icon="public" />
-              <SocialIcon icon="share" />
+              <SocialIcon icon="mail" href={`mailto:${CONTACT.email}`} label="Email Supremo Barber" />
+              <SocialIcon icon="call" href={`tel:${CONTACT.phone.replace(/\s/g, "")}`} label="Call Supremo Barber" />
             </div>
           </div>
 
@@ -92,12 +90,8 @@ export function Footer() {
             © {new Date().getFullYear()} Supremo Barber. All Rights Reserved.
           </p>
           <div className="flex gap-8 text-sm text-[#d2c5b1]/60">
-            <Link href="#" className="hover:text-[#f0bf5c] transition-colors">
-              Privacy Policy
-            </Link>
-            <Link href="#" className="hover:text-[#f0bf5c] transition-colors">
-              Terms of Service
-            </Link>
+            <span>Privacy Policy</span>
+            <span>Terms of Service</span>
           </div>
         </div>
       </div>
@@ -115,10 +109,11 @@ function FooterHeading({ children }: { children: React.ReactNode }) {
   );
 }
 
-function SocialIcon({ icon }: { icon: string }) {
+function SocialIcon({ icon, href, label }: { icon: string; href: string; label: string }) {
   return (
     <a
-      href="#"
+      href={href}
+      aria-label={label}
       className="w-10 h-10 rounded-full border border-[#4e4637] flex items-center justify-center text-[#d2c5b1] hover:text-[#f0bf5c] hover:border-[#f0bf5c] transition-all"
     >
       <span className="material-symbols-outlined">{icon}</span>

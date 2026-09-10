@@ -5,10 +5,7 @@
  */
 import { Navbar } from "@/components/layout/navbar";
 import { Footer } from "@/components/layout/footer";
-import { MobileNav } from "@/components/layout/mobile-nav";
-import { SectionHeading } from "@/components/ui/section-heading";
-import { StatusCard } from "@/components/ui/status-card";
-import { StatusBadge } from "@/components/ui/status-badge";
+import { RealtimeRefresh } from "@/components/realtime/realtime-refresh";
 import { HeroActionButton } from "@/components/ui/hero-action-button";
 import { BentoImageCard, BentoContentCard } from "@/components/ui/bento-card";
 
@@ -19,11 +16,12 @@ const FEATURED_IMG =
   "https://lh3.googleusercontent.com/aida-public/AB6AXuBbj3Eg2AmfXtCy-B6VnxppHRwjXTv2X8FAPTgC8jYf5d4ovEpZfhN1Py5CkrkSV7xV5heGwPxgOW3_N_r51-laUIey5to_h78huKwwnze7wzrDpX93lTjHxoAYZrl5jIXVIHfjDmp5_u1dKCieHr6tYhKZsWO2okns1G9L2wr_AWwI5mVSG-3Hxtb9j_pHVRIsY9ZFAh18RrKwxqzzfaTAXkGCD1i6aGq9ogyYaveplAH0jslFEupY0djJbBRNWqUmS2dTmMP1xxY";
 
 import { createClient } from "@/lib/supabase/server";
-import { CheckCircle, WarningCircle } from "@phosphor-icons/react/dist/ssr";
+import { CheckCircle, Users, WarningCircle } from "@phosphor-icons/react/dist/ssr";
 import { AuthShell } from "@/components/layout";
 import { AuthPanel } from "@/components/ui/auth-panel";
 import { LandingHeaderStatus } from "@/components/landing/landing-header-status";
 import { LandingServices } from "@/components/landing/landing-services";
+import { getPublicLandingState } from "@/lib/queries/public-landing";
 
 export default async function Home({
   searchParams,
@@ -98,8 +96,14 @@ export default async function Home({
     );
   }
 
+  const landing = await getPublicLandingState();
+
   return (
     <>
+      <RealtimeRefresh
+        channelName="public-landing"
+        tables={["queue_tickets", "shop_settings", "services"]}
+      />
       <Navbar />
 
       <main>
@@ -115,7 +119,10 @@ export default async function Home({
           </div>
 
           <div className="relative z-10 max-w-7xl mx-auto px-5 md:px-10 text-center">
-            <LandingHeaderStatus />
+            <LandingHeaderStatus
+              isOpen={landing.shopIsOpen}
+              date={landing.currentDate}
+            />
 
             <div className="mb-6 inline-flex items-center px-4 py-1.5 rounded-full bg-[#891c22]/20 border border-[#891c22]/30 text-[#ffb3b0] text-[14px] font-medium uppercase tracking-[0.2em]">
               Heritage &amp; Precision Since 2017
@@ -137,7 +144,7 @@ export default async function Home({
               the authority you deserve.
             </p>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+            <div className="grid grid-cols-1 gap-6 max-w-6xl mx-auto md:grid-cols-3">
               <HeroActionButton
                 variant="primary"
                 icon="group_add"
@@ -151,7 +158,22 @@ export default async function Home({
                 iconFilled
                 title="Find Your Style with AI"
                 subtitle="Predictive grooming consultation"
+                href="#ai-style"
               />
+              <div className="relative overflow-hidden rounded-[32px] border-2 border-[#f0bf5c] bg-[#f0bf5c]/10 p-6 text-left shadow-[0_0_35px_rgba(240,191,92,0.22)]">
+                <div className="mb-4 flex size-12 items-center justify-center rounded-full bg-[#f0bf5c]/15 text-[#f0bf5c]">
+                  <Users className="size-6" weight="fill" />
+                </div>
+                <p className="text-[11px] font-black uppercase tracking-[0.2em] text-[#f0bf5c]">
+                  Live Queue
+                </p>
+                <h2
+                  className="mt-2 text-[30px] uppercase leading-none text-[#ebe1d6]"
+                  style={{ fontFamily: "var(--font-bebas), 'Bebas Neue', sans-serif" }}
+                >
+                  General Queue: {landing.waitingCount} - ~{landing.estimatedWaitMinutes}m Wait
+                </h2>
+              </div>
             </div>
           </div>
         </section>
@@ -173,30 +195,31 @@ export default async function Home({
                 <BentoContentCard
                   icon="diamond"
                   badgeText="Exclusive"
-                  title="VIP Lounge"
-                  description="Complimentary premium beverages and high-speed fiber for our members."
+                  title="Queue Lounge"
+                  description="Relax in style. Track your live queue status on-screen or via SMS while enjoying complimentary premium beverages and high-speed fiber."
                   backgroundImage={HERO_BG}
                   surface="high"
                 />
 
-                <BentoContentCard
-                  icon="psychology"
-                  iconFilled
-                  title="Style AI"
-                  description="Personalized recommendations based on your facial structure."
-                  surface="default"
-                  iconColor="text-[#ffb3b0]"
-                />
+                <div id="ai-style">
+                  <BentoContentCard
+                    icon="psychology"
+                    iconFilled
+                    title="Style AI"
+                    description="Personalized recommendations based on your facial structure."
+                    surface="default"
+                    iconColor="text-[#ffb3b0]"
+                  />
+                </div>
               </div>
             </div>
           </div>
         </section>
 
-        <LandingServices />
+        <LandingServices services={landing.services} />
       </main>
 
       <Footer />
-      <MobileNav />
     </>
   );
 }

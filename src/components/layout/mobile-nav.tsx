@@ -2,15 +2,15 @@
  * MobileNav — components/layout/mobile-nav.tsx
  *
  * Fixed bottom navigation bar for mobile devices (hidden on md+).
- * Provides quick access to Home, Queue, and AI Styles.
+ * Provides quick access to Home, Queue, and Services.
  *
  * Uses Material Symbols icons and the Supremo gold accent color.
  */
 
 const MOBILE_NAV_ITEMS: { icon: string; label: string; href: string; active?: boolean }[] = [
-  { icon: "home", label: "Home", href: "#", active: true },
-  { icon: "format_list_numbered", label: "Queue", href: "#" },
-  { icon: "auto_awesome", label: "AI Styles", href: "#" },
+  { icon: "home", label: "Home", href: "/", active: true },
+  { icon: "format_list_numbered", label: "Queue", href: "/auth/login" },
+  { icon: "auto_awesome", label: "AI Styles", href: "#ai-style" },
 ];
 
 export function MobileNav() {

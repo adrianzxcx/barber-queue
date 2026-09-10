@@ -27,12 +27,14 @@ export interface Barber {
 interface ManageRosterDialogProps {
   barbers: Barber[];
   setBarbers: React.Dispatch<React.SetStateAction<Barber[]>>;
+  handleToggleBarberShift?: (barberName: string) => void;
   trigger?: React.ReactNode;
 }
 
 export function ManageRosterDialog({
   barbers,
   setBarbers,
+  handleToggleBarberShift,
   trigger,
 }: ManageRosterDialogProps) {
   const [isOpen, setIsOpen] = useState(false);
@@ -124,15 +126,28 @@ export function ManageRosterDialog({
                   <span
                     className={cn(
                       "size-2 rounded-full",
-                      barber.status === "available" && "bg-[#f0bf5c]",
-                      barber.status === "busy" && "bg-[#891c22]",
+                      barber.status === "available" && "bg-emerald-500 shadow-[0_0_6px_rgba(16,185,129,0.5)]",
+                      barber.status === "busy" && "bg-orange-500 shadow-[0_0_6px_rgba(249,115,22,0.5)]",
                       barber.status === "unavailable" && "bg-zinc-600"
                     )}
                     title={barber.status}
                   />
+                  {handleToggleBarberShift && (
+                    <button
+                      onClick={() => handleToggleBarberShift(barber.name)}
+                      className={cn(
+                        "px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider border rounded-none transition-all select-none cursor-pointer",
+                        barber.status === "unavailable"
+                          ? "border-[#f0bf5c] text-[#f0bf5c] hover:bg-[#f0bf5c]/10"
+                          : "border-red-900/50 bg-red-950/10 text-red-400 hover:bg-[#891c22]/20"
+                      )}
+                    >
+                      {barber.status === "unavailable" ? "Log In" : "Log Out"}
+                    </button>
+                  )}
                   <button
                     onClick={() => handleRemoveBarber(barber.name)}
-                    className="text-red-400 hover:text-red-300 transition-colors p-1"
+                    className="text-red-400 hover:text-red-300 transition-colors p-1 cursor-pointer"
                     title="Remove Barber"
                   >
                     <Trash size={14} />

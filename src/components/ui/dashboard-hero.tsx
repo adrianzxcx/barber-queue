@@ -5,9 +5,10 @@ import { Button } from "@/components/ui/button";
 
 type DashboardHeroProps = {
   image: string;
+  onJoinClick?: () => void;
 };
 
-function DashboardHero({ image }: DashboardHeroProps) {
+function DashboardHero({ image, onJoinClick }: DashboardHeroProps) {
   return (
     <section className="relative min-h-[440px] overflow-hidden rounded-3xl border border-supremo-outline-variant/20 bg-supremo-surface-container">
       <div
@@ -30,7 +31,10 @@ function DashboardHero({ image }: DashboardHeroProps) {
           Premium grooming meets industrial precision. Experience the sharpest
           cuts in an atmosphere designed for the modern gentleman.
         </p>
-        <Button className="mt-8 h-16 w-fit rounded-lg bg-primary px-10 text-base font-black uppercase tracking-[0.14em] text-primary-foreground shadow-lg shadow-primary/20 hover:bg-primary/90 [&_svg]:size-6">
+        <Button 
+          onClick={onJoinClick}
+          className="mt-8 h-16 w-fit rounded-lg bg-primary px-10 text-base font-black uppercase tracking-[0.14em] text-primary-foreground shadow-lg shadow-primary/20 hover:bg-primary/90 [&_svg]:size-6 cursor-pointer"
+        >
           Join Queue
           <ArrowRightIcon />
         </Button>
